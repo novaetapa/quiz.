@@ -71,28 +71,16 @@
         {question: "Onde Jesus nasceu?", options: ["Jerusalém", "Nazaré", "Belém", "Galileia", "Egito"], answer: 2},
         {question: "Quem foi o homem mais forte da Bíblia?", options: ["Golias", "Sansão", "Salomão", "Davi", "Absalão"], answer: 1}
     ];
-    var validLogins = {
-        "usuario1": "senha1", "usuario2": "senha2", "usuario3": "senha3", "usuario4": "senha4", "usuario5": "senha5",
-        "usuario6": "senha6", "usuario7": "senha7", "usuario8": "senha8", "usuario9": "senha9", "usuario10": "senha10",
-        "lider": "lider123"
-    };
 
     function validateLogin() {
         var username = document.getElementById('username').value;
-        var password = document.getElementById('password').value;
-        if (validLogins.hasOwnProperty(username) && validLogins[username] === password) {
+        if (username) {
             currentUser = username;
-            if (username === "lider") {
-                document.getElementById('loginContainer').style.display = 'none';
-                document.getElementById('leaderContainer').style.display = 'block';
-                displayResults();
-            } else {
-                document.getElementById('loginContainer').style.display = 'none';
-                document.getElementById('quizContainer').style.display = 'block';
-                displayQuestion();
-            }
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('quizContainer').style.display = 'block';
+            displayQuestion();
         } else {
-            document.getElementById('loginMessage').innerHTML = 'Login ou senha incorretos.';
+            document.getElementById('loginMessage').innerHTML = 'Login incorreto.';
         }
     }
 
@@ -134,7 +122,6 @@
             document.getElementById('score').innerHTML = score === questions.length ? "Parabéns, você acertou tudo!" : "Pontuação final: " + finalScore;
             document.getElementById('nextButton').style.display = 'none';
             document.getElementById('resetButton').style.display = 'inline';
-            saveScore(currentUser, finalScore);
         }
     }
 
@@ -150,129 +137,6 @@
         return Math.round(10 * (score / questions.length));
     }
 
-    function saveScore(user, score) {
-        var scores = JSON.parse(localStorage.getItem('quizScores')) || {};
-        scores[user] = score;
-        local        Storage.setItem('quizScores', JSON.stringify(scores));
-    }
-
-    function displayResults() {
-        var scores = JSON.parse(localStorage.getItem('quizScores')) || {};
-        var resultsHtml = "<ul>";
-        for (var user in scores) {
-            if (user !== "lider") {
-                resultsHtml += "<li>" + user + ": " + scores[user] + "</li>";
-            }
-        }
-        resultsHtml += "</ul>";
-        document.getElementById('results').innerHTML = resultsHtml;
-    }
-
-    function resetAllScores() {
-        localStorage.removeItem('quizScores');
-        displayResults();
-    }
-
-    function showLeaderScreen() {
-        document.getElementById('editContainer').style.display = 'none';
-        document.getElementById('leaderContainer').style.display = 'block';
-        displayResults();
-    }
-
-    function showEditScreen() {
-        document.getElementById('leaderContainer').style.display = 'none';
-        document.getElementById('editContainer').style.display = 'block';
-        displayEditQuestions();
-    }
-
-    function displayEditQuestions() {
-        var editQuestionsHtml = "";
-        for (var i = 0; i < questions.length; i++) {
-            var question = questions[i];
-            editQuestionsHtml += '<div id="questionContainer' + i + '"><input type="text" value="' + question.question + '" id="question' + i + '">';
-            editQuestionsHtml += '<button onclick="removeQuestion(' + i + ')">Remover Questão</button><br>';
-            for (var j = 0; j < question.options.length; j++) {
-                editQuestionsHtml += '<div id="optionContainer' + i + '_' + j + '">';
-                editQuestionsHtml += '<input type="text" value="' + question.options[j] + '" id="option' + i + '_' + j + '">';
-                editQuestionsHtml += '<input type="radio" name="answer' + i + '" ' + (question.answer === j ? 'checked' : '') + ' value="' + j + '">';
-                editQuestionsHtml += '<button onclick="removeOption(' + i + ',' + j + ')">Remover Opção</button><br>';
-                editQuestionsHtml += '</div>';
-            }
-            editQuestionsHtml += '<button onclick="addOption(' + i + ')">Adicionar Opção</button>';
-            editQuestionsHtml += '<button onclick="removeAllOptions(' + i + ')">Remover Todas as Opções</button></div><br>';
-        }
-        document.getElementById('editQuestions').innerHTML = editQuestionsHtml;
-    }
-
-    function addOption(questionIndex) {
-        var question = questions[questionIndex];
-        var newOptionId = "option" + questionIndex + "_" + question.options.length;
-        var container = document.createElement("div");
-        container.id = "optionContainer" + questionIndex + "_" + question.options.length;
-        container.innerHTML = '<input type="text" id="' + newOptionId + '">';
-        container.innerHTML += '<input type="radio" name="answer' + questionIndex + '" value="' + question.options.length + '">';
-        container.innerHTML += '<button onclick="removeOption(' + questionIndex + ',' + question.options.length + ')">Remover Opção</button><br>';
-        document.getElementById('questionContainer' + questionIndex).appendChild(container);
-        question.options.push("");
-    }
-
-    function removeOption(questionIndex, optionIndex) {
-        var question = questions[questionIndex];
-        question.options.splice(optionIndex, 1);
-        displayEditQuestions();
-    }
-
-    function removeAllOptions(questionIndex) {
-        questions[questionIndex].options = [];
-        displayEditQuestions();
-    }
-
-    function addQuestion() {
-        var newQuestion = {
-            question: "",
-            options: [""],
-            answer: 0
-        };
-        questions.push(newQuestion);
-        displayEditQuestions();
-    }
-
-    function removeQuestion(questionIndex) {
-        questions.splice(questionIndex, 1);
-        displayEditQuestions();
-    }
-
-    function saveChanges() {
-        var newQuestions = [];
-        for (var i = 0; i < questions.length; i++) {
-            var questionText = document.getElementById('question' + i).value;
-            var options = [];
-            var answer = 0;
-            var radios = document.getElementsByName('answer' + i);
-            for (var j = 0; j < questions[i].options.length; j++) {
-                options.push(document.getElementById('option' + i + '_' + j).value);
-                if (radios[j].checked) {
-                    answer = j;
-                }
-            }
-            newQuestions.push({
-                question: questionText,
-                options: options,
-                answer: answer
-            });
-        }
-        questions = newQuestions;
-        alert("Alterações salvas com sucesso!");
-        showLeaderScreen();
-    }
-
-    function saveTitle() {
-        var newTitle = document.getElementById('editTitle').value;
-        quizTitle = newTitle;
-        document.getElementById('quizTitle').innerText = quizTitle;
-        alert("Título do quiz salvo com sucesso!");
-    }
-
     function logout() {
         currentQuestion = 0;
         score = 0;
@@ -285,9 +149,6 @@
         document.getElementById('password').value = "";
         document.getElementById('loginMessage').innerHTML = "";
     }
-  git add index.html
-    git push origin main
 </script>
 </body>
 </html>
-
