@@ -12,30 +12,16 @@
     #nextButton { background-color: blue; }
     .correct { background-color: green; }
     .incorrect { background-color: red; }
-    #quizContainer, #leaderContainer, #editContainer { display: none; }
+    #leaderContainer, #editContainer { display: none; }
 </style>
 </head>
 <body>
-<div class="container" id="loginContainer">
-    <h1>Login</h1>
-    <div>
-        <label for="username">Usuário:</label>
-        <input type="text" id="username">
-    </div>
-    <div>
-        <label for="password">Senha:</label>
-        <input type="password" id="password">
-    </div>
-    <button onclick="validateLogin()">Entrar</button>
-    <div id="loginMessage"></div>
-</div>
 <div class="container" id="quizContainer">
     <h1 id="quizTitle">Quiz Bíblico</h1>
     <div id="question"></div>
     <div id="options"></div>
     <button id="nextButton" onclick="nextQuestion()">Prosseguir</button>
     <button id="resetButton" onclick="resetQuiz()" style="display:none;">Voltar ao Início</button>
-    <button onclick="logout()">Logout</button>
     <div id="score"></div>
 </div>
 <div class="container" id="leaderContainer">
@@ -43,7 +29,6 @@
     <div id="results"></div>
     <button onclick="resetAllScores()">Resetar Resultados</button>
     <button onclick="showEditScreen()">Editar Questões</button>
-    <button onclick="logout()">Logout</button>
 </div>
 <div class="container" id="editContainer">
     <h1>Editar Título do Quiz</h1>
@@ -58,7 +43,7 @@
     <button onclick="showLeaderScreen()">Voltar</button>
 </div>
 <script>
-    var currentQuestion = 0, score = 0, currentUser = "", quizTitle = "Quiz Bíblico";
+    var currentQuestion = 0, score = 0, quizTitle = "Quiz Bíblico";
     var questions = [
         {question: "Quem foi o primeiro homem?", options: ["Abel", "Caim", "Noé", "Adão", "Enoque"], answer: 3},
         {question: "Quem foi lançado na cova dos leões?", options: ["Davi", "Elias", "Moisés", "Daniel", "José"], answer: 3},
@@ -71,18 +56,6 @@
         {question: "Onde Jesus nasceu?", options: ["Jerusalém", "Nazaré", "Belém", "Galileia", "Egito"], answer: 2},
         {question: "Quem foi o homem mais forte da Bíblia?", options: ["Golias", "Sansão", "Salomão", "Davi", "Absalão"], answer: 1}
     ];
-
-    function validateLogin() {
-        var username = document.getElementById('username').value;
-        if (username) {
-            currentUser = username;
-            document.getElementById('loginContainer').style.display = 'none';
-            document.getElementById('quizContainer').style.display = 'block';
-            displayQuestion();
-        } else {
-            document.getElementById('loginMessage').innerHTML = 'Login incorreto.';
-        }
-    }
 
     function displayQuestion() {
         document.getElementById('score').innerHTML = "";
@@ -135,19 +108,6 @@
 
     function calculateScore() {
         return Math.round(10 * (score / questions.length));
-    }
-
-    function logout() {
-        currentQuestion = 0;
-        score = 0;
-        currentUser = "";
-        document.getElementById('loginContainer').style.display = 'block';
-        document.getElementById('quizContainer').style.display = 'none';
-        document.getElementById('leaderContainer').style.display = 'none';
-        document.getElementById('editContainer').style.display = 'none';
-        document.getElementById('username').value = "";
-        document.getElementById('password').value = "";
-        document.getElementById('loginMessage').innerHTML = "";
     }
 </script>
 </body>
