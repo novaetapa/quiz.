@@ -1,387 +1,275 @@
-<html lang="pt">
+<!DOCTYPE html>
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz Elétrica</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-image: url(https://brggeradores.com.br/wp-content/uploads/2023/11/qual-a-funcao-de-um-gerador-eletrico-em-casa.png);:no-repeat
-        margin: 0;
-        padding: 0;
-    }
-    .container {
-        max-width: 600px;
-        background-color: #dff0d8;
-        margin: 20px auto;
-        padding: 20px;
-        border-radius: 8px;
-        text-align: center;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    button {
-        background-color: gray;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        margin: 10px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    #nextButton {
-        background-color: blue;
-    }
-    .correct {
-        background-color: green;
-    }
-    .incorrect {
-        background-color: red;
-    }
-    #quizContainer, #leaderContainer, #editContainer {
-        display: none;
-    }
-    /* Media Queries para Responsividade */
-    @media (max-width: 768px) {
-        .container {
-            width: 90%;
-            margin: 10px auto;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treinamento de Contabilidade</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
         }
-    }
-    @media (max-width: 480px) {
         .container {
-            width: 100%;
-            margin: 5px auto;
-            padding: 10px;
+            max-width: 600px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            text-align: center;
+        }
+        .question, .personal-info {
+            margin-bottom: 15px;
+        }
+        .question label, .personal-info label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .question input[type="radio"], .personal-info input[type="text"] {
+            margin-right: 10px;
         }
         button {
-            width: 100%;
-            padding: 15px;
-            font-size: 16px;
+            display: inline-block;
+            width: 48%;
+            padding: 10px;
+            margin: 5px 1%;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
-    }
-</style>
-<!-- Adicione o SDK do Firebase -->
-<script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
+        button.reset-btn {
+            background-color: #f44336;
+        }
+        button:disabled {
+            background-color: #ccc;
+        }
+        .hidden {
+            display: none;
+        }
+        .correct {
+            background-color: #d4edda;
+        }
+        .incorrect {
+            background-color: #f8d7da;
+        }
 
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyCX8wBQ86GRksCLM-3jTUoxNicGxeU1k9U",
-      authDomain: "teste2-c9a3e.firebaseapp.com",
-      projectId: "teste2-c9a3e",
-      storageBucket: "teste2-c9a3e.appspot.com",
-      messagingSenderId: "821106776933",
-      appId: "1:821106776933:web:1b7451528f1807f94e1f8c"
-    };
+        /* Estilos responsivos para dispositivos móveis */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 10px;
+            }
+            h1, h2, h3 {
+                font-size: 1.2em;
+            }
+            table {
+                font-size: 0.9em;
+                width: 100%;
+                display: block;
+                overflow-x: auto; /* Scroll horizontal para tabelas grandes */
+                white-space: nowrap; /* Evita quebra de linha nas células */
+            }
+            th, td {
+                padding: 8px;
+            }
+            button {
+                width: 100%; /* Botões ocupam a largura total no celular */
+                margin-bottom: 10px;
+            }
+        }
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-</script>
+        /* Estilos adicionais para dispositivos ainda menores */
+        @media (max-width: 480px) {
+            h1, h2, h3 {
+                font-size: 1.1em;
+            }
+            table {
+                font-size: 0.8em;
+            }
+            th, td {
+                padding: 6px;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="container" id="loginContainer">
-    <h1>Login</h1>
-    <div>
-        <label for="username">Usuário:</label>
-        <input type="text" id="username">
+
+    <!-- Parte 1: Explicações -->
+    <div class="container" id="quiz-area">
+        <h1>Bem-vindo ao Treinamento de Contabilidade</h1>
+        <h2>Registro do Aluno</h2>
+
+        <!-- Solicitação de Nome e Turma -->
+        <form id="quiz-form">
+            <div class="personal-info">
+                <label for="name">Por favor, insira seu nome:</label>
+                <input type="text" id="name" name="name" required placeholder="Seu nome">
+
+                <label for="turma">Turma à qual você pertence:</label>
+                <input type="text" id="turma" name="turma" required placeholder="Sua turma">
+            </div>
+
+            <!-- Atividade 1: Terminologia de Custos -->
+            <div class="question">
+                <h3>Atividade: Terminologia de Custos</h3>
+
+                <p>1. Qual dos seguintes termos é utilizado para descrever o pagamento realizado como resultado de uma aquisição de bens ou serviços?</p>
+                <input type="radio" name="q1" value="Desembolso" required> Desembolso<br>
+                <input type="radio" name="q1" value="Gasto"> Gasto<br>
+
+                <p>2. Qual é o termo que se refere à compra de um produto ou serviço que gera um sacrifício financeiro para a entidade?</p>
+                <input type="radio" name="q2" value="Perda" required> Perda<br>
+                <input type="radio" name="q2" value="Despesa"> Despesa<br>
+                <input type="radio" name="q2" value="Gasto"> Gasto<br>
+                <input type="radio" name="q2" value="Desembolso"> Desembolso<br>
+
+                <p>3. A aquisição de uma máquina que será utilizada por vários anos na produção é considerada:</p>
+                <input type="radio" name="q3" value="Despesa" required> Despesa<br>
+                <input type="radio" name="q3" value="Custo"> Custo<br>
+                <input type="radio" name="q3" value="Investimento"> Investimento<br>
+                <input type="radio" name="q3" value="Perda"> Perda<br>
+            </div>
+
+            <!-- Atividade 2: Classificação de Custos Direto ou Indireto -->
+            <div class="question">
+                <h3>Classifique em Custo Direto ou Indireto</h3>
+
+                <p>4. O salário dos funcionários da produção é considerado um:</p>
+                <input type="radio" name="q4" value="Custo Direto" required> Custo Direto<br>
+                <input type="radio" name="q4" value="Custo Indireto"> Custo Indireto<br>
+
+                <p>5. O aluguel da fábrica é considerado um:</p>
+                <input type="radio" name="q5" value="Custo Direto" required> Custo Direto<br>
+                <input type="radio" name="q5" value="Custo Indireto"> Custo Indireto<br>
+            </div>
+
+            <!-- Atividade 3: Classificação de Custos Fixo ou Variável -->
+            <div class="question">
+                <h3>Classifique em Custo Fixo ou Variável</h3>
+
+                <p>6. O custo com matéria-prima é considerado um:</p>
+                <input type="radio" name="q6" value="Custo Fixo" required> Custo Fixo<br>
+                <input type="radio" name="q6" value="Custo Variável"> Custo Variável<br>
+
+                <p>7. O aluguel do prédio onde a fábrica opera é considerado um:</p>
+                <input type="radio" name="q7" value="Custo Fixo" required> Custo Fixo<br>
+                <input type="radio" name="q7" value="Custo Variável"> Custo Variável<br>
+            </div>
+
+            <!-- Atividade 4: Estudo de Caso - Cálculo da Margem Direta -->
+            <div class="question">
+                <h3>Estudo de Caso: Cálculo da Margem Direta</h3>
+                <p>Uma empresa fabrica um produto com os seguintes dados:</p>
+                <ul>
+                    <li>Preço de venda por unidade: R$ 100</li>
+                    <li>Custo direto por unidade: R$ 40</li>
+                </ul>
+
+                <p>8. Qual é a margem direta por unidade?</p>
+                <input type="radio" name="q8" value="R$ 60" required> R$ 60<br>
+                <input type="radio" name="q8" value="R$ 40"> R$ 40<br>
+                <input type="radio" name="q8" value="R$ 100"> R$ 100<br>
+
+                <!-- Botões de Envio e Reset -->
+                <button type="submit" id="submit-btn">Enviar Respostas</button>
+                <button type="reset" class="reset-btn">Resetar</button>
+            </div>
+        </form>
     </div>
-    <div>
-        <label for="password">Senha:</label>
-        <input type="password" id="password">
+
+    <!-- Área do Professor -->
+    <div class="container">
+        <h2>Área do Professor</h2>
+        <label for="professor-password">Senha do Professor:</label>
+        <input type="password" id="professor-password" placeholder="Digite a senha"><br><br>
+        <button id="professor-access-btn">Acessar Dados dos Alunos</button>
     </div>
-    <button onclick="validateLogin()">Entrar</button>
-    <div id="loginMessage"></div>
-</div>
-<div class="container" id="quizContainer">
-    <h1 id="quizTitle">Quiz Elétrica</h1>
-    <div id="question"></div>
-    <div id="options"></div>
-    <button id="nextButton" onclick="nextQuestion()">Prosseguir</button>
-    <button id="resetButton" onclick="resetQuiz()" style="display:none;">Voltar ao Início</button>
-    <button onclick="logout()">Logout</button>
-    <div id="score"></div>
-</div>
-<div class="container" id="leaderContainer">
-    <h1>Resultados dos Usuários</h1>
-    <div id="results"></div>
-    <button onclick="resetAllScores()">Resetar Resultados</button>
-    <button onclick="showEditScreen()">Editar Questões</button>
-    <button onclick="logout()">Logout</button>
-</div>
-<div class="container" id="editContainer">
-    <h1>Editar Título do Quiz</h1>
-    <div>
-        <input type="text" id="editTitle" value="Quiz Elétrica">
-        <button onclick="saveTitle()">Salvar Título</button>
+
+    <!-- Tabela de Resultados -->
+    <div class="container hidden" id="professor-area">
+        <h3>Resultados dos Alunos</h3>
+        <table id="results-table" border="1">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Turma</th>
+                    <th>Q1</th>
+                    <th>Q2</th>
+                    <th>Q3</th>
+                    <th>Q4</th>
+                    <th>Q5</th>
+                    <th>Q6</th>
+                    <th>Q7</th>
+                    <th>Q8</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Os dados serão carregados aqui -->
+            </tbody>
+        </table>
     </div>
-    <h1>Editar Questões</h1>
-    <div id="editQuestions"></div>
-    <button onclick="addQuestion()">Adicionar Nova Questão</button>
-    <button onclick="saveChanges()">Salvar Alterações</button>
-    <button onclick="showLeaderScreen()">Voltar</button>
-</div>
-<script>
-    var currentQuestion = 0;
-    var score = 0;
-    var currentUser = "";
-    var quizTitle = "Quiz Elétrica";
-    var questions = [
-        { question: "O que é uma corrente elétrica?", options: ["Movimento de elétrons", "Movimento de prótons", "Movimento de nêutrons", "Movimento de átomos"], answer: 0 },
-        { question: "O que é uma resistência elétrica?", options: ["Oposição ao fluxo de corrente", "Facilitação ao fluxo de corrente", "Geração de corrente", "Consumo de corrente"], answer: 0 },
-        { question: "O que é a voltagem?", options: ["Potencial elétrico", "Corrente elétrica", "Resistência elétrica", "Energia elétrica"], answer: 0 },
-        { question: "Qual a unidade de medida da corrente elétrica?", options: ["Volt", "Ohm", "Ampere", "Watt"], answer: 2 },
-        { question: "Qual a unidade de medida da resistência elétrica?", options: ["Volt", "Ohm", "Ampere", "Watt"], answer: 1 },
-        { question: "Qual a unidade de medida da voltagem?", options: ["Volt", "Ohm", "Ampere", "Watt"], answer: 0 },
-        { question: "O que é um curto-circuito?", options: ["Conexão de baixa resistência", "Conexão de alta resistência", "Interrupção de circuito", "Aumento de resistência"], answer: 0 },
-        { question: "O que é um circuito em série?", options: ["Componentes conectados em uma única trajetória", "Componentes conectados em múltiplas trajetórias", "Componentes conectados em paralelo", "Componentes conectados em estrela"], answer: 0 },
-        { question: "O que é um circuito em paralelo?", options: ["Componentes conectados em múltiplas trajetórias", "Componentes conectados em uma única trajetória", "Componentes conectados em série", "Componentes conectados em estrela"], answer: 0 },
-        { question: "Qual é a lei de Ohm?", options: ["V = IR", "P = VI", "I = V/R", "R = V/I"], answer: 0 },
-        { question: "O que é um capacitor?", options: ["Armazena carga elétrica", "Armazena corrente elétrica", "Armazena resistência elétrica", "Armazena potência elétrica"], answer: 0 },
-        { question: "O que é um indutor?", options: ["Armazena energia em um campo magnético", "Armazena energia em um campo elétrico", "Armazena energia em um campo gravitacional", "Armazena energia em um campo nuclear"], answer: 0 },
-        { question: "Qual é a função de um diodo?", options: ["Permitir o fluxo de corrente em uma direção", "Impedir o fluxo de corrente em ambas as direções", "Permitir o fluxo de corrente em ambas as direções", "Impedir o fluxo de corrente em uma direção"], answer: 0 },
-        { question: "O que é um transformador?", options: ["Dispositivo que altera a voltagem", "Dispositivo que altera a corrente", "Dispositivo que altera a resistência", "Dispositivo que altera a potência"], answer: 0 },
-        { question: "Qual a função de um resistor?", options: ["Limitar a corrente elétrica", "Aumentar a corrente elétrica", "Gerar corrente elétrica", "Armazenar corrente elétrica"], answer: 0 },
-        { question: "O que é um circuito aberto?", options: ["Circuito com interrupção", "Circuito com baixa resistência", "Circuito com alta resistência", "Circuito em curto"], answer: 0 },
-        { question: "O que é um circuito fechado?", options: ["Circuito sem interrupção", "Circuito com interrupção", "Circuito em curto", "Circuito com alta resistência"], answer: 0 },
-        { question: "Qual a função de um fusível?", options: ["Proteger o circuito contra sobrecarga", "Gerar corrente elétrica", "Aumentar a voltagem", "Armazenar energia elétrica"], answer: 0 },
-        { question: "O que é um gerador?", options: ["Dispositivo que converte energia mecânica em elétrica", "Dispositivo que converte energia elétrica em mecânica", "Dispositivo que armazena energia elétrica", "Dispositivo que armazena energia mecânica"], answer: 0 },
-        { question: "O que é um motor elétrico?", options: ["Dispositivo que converte energia elétrica em mecânica", "Dispositivo que converte energia mecânica em elétrica", "Dispositivo que armazena energia elétrica", "Dispositivo que armazena energia mecânica"], answer: 0 },
-        { question: "Qual a unidade de medida da potência elétrica?", options: ["Volt", "Ohm", "Ampere", "Watt"], answer: 3 },
-        { question: "O que é um circuito integrado?", options: ["Conjunto de componentes eletrônicos miniaturizados", "Conjunto de resistores", "Conjunto de capacitores", "Conjunto de indutores"], answer: 0 },
-        { question: "Qual a unidade de medida da frequência?", options: ["Hertz", "Watt", "Volt", "Ohm"], answer: 0 },
-        { question: "O que é uma fonte de alimentação?", options: ["Dispositivo que fornece energia elétrica", "Dispositivo que armazena energia elétrica", "Dispositivo que consome energia elétrica", "Dispositivo que regula energia elétrica"], answer: 0 },
-        { question: "Qual o símbolo de um resistor?", options: ["R", "C", "L", "D"], answer: 0 },
-        { question: "O que é um wattímetro?", options: ["Instrumento que mede a potência elétrica", "Instrumento que mede a corrente elétrica", "Instrumento que mede a resistência elétrica", "Instrumento que mede a tensão elétrica"], answer: 0 }
-    ];
 
-    var validLogins = {
-        "usuario1": "senha1",
-        "usuario2": "senha2",
-        "usuario3": "senha3",
-        "usuario4": "senha4",
-        "usuario5": "senha5",
-        "usuario6": "senha6",
-        "usuario7": "senha7",
-        "usuario8": "senha8",
-        "usuario9": "senha9",
-        "daniel": "daniel",
-        "lider": "lider123"
-    };
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore.js";
 
-    function validateLogin() {
-        var username = document.getElementById('username').value;
-        var password = document.getElementById('password').value;
-        if (validLogins.hasOwnProperty(username) && validLogins[username] === password) {
-            currentUser = username;
-            if (username === "lider") {
-                document.getElementById('loginContainer').style.display = 'none';
-                document.getElementById('leaderContainer').style.display = 'block';
-                displayResults();
-            } else {
-                document.getElementById('loginContainer').style.display = 'none';
-                document.getElementById('quizContainer').style.display = 'block';
-                displayQuestion();
-            }
-        } else {
-            document.getElementById('loginMessage').innerHTML = 'Login ou senha incorretos.';
-        }
-    }
-
-    function displayQuestion() {
-        document.getElementById('score').innerHTML = "";
-        var question = questions[currentQuestion];
-        var optionsHtml = "";
-        for (var i = 0; i < question.options.length; i++) {
-            optionsHtml += '<button id="btn' + i + '" onclick="selectOption(' + i + ')">' + question.options[i] + '</button><br>';
-        }
-        document.getElementById('question').innerHTML = question.question;
-        document.getElementById('options').innerHTML = optionsHtml;
-    }
-
-    function selectOption(selected) {
-        var question = questions[currentQuestion];
-        for (var i = 0; i < question.options.length; i++) {
-            var btn = document.getElementById('btn' + i);
-            btn.onclick = null;
-            if (i === question.answer) {
-                btn.className = 'correct';
-            } else if (i === selected) {
-                btn.className = 'incorrect';
-            }
-        }
-        if (selected === question.answer) {
-            score++;
-        }
-    }
-
-    function nextQuestion() {
-        if (currentQuestion < questions.length - 1) {
-            currentQuestion++;
-            displayQuestion();
-        } else {
-            document.getElementById('question').innerHTML = "";
-            document.getElementById('options').innerHTML = "";
-            var finalScore = calculateScore();
-            document.getElementById('score').innerHTML = score === questions.length ? "Parabéns, você acertou tudo!" : "Pontuação final: " + finalScore;
-            document.getElementById('nextButton').style.display = 'none';
-            document.getElementById('resetButton').style.display = 'inline';
-            saveScore(currentUser, finalScore);
-        }
-    }
-
-    function resetQuiz() {
-        currentQuestion = 0;
-        score = 0;
-        displayQuestion();
-        document.getElementById('nextButton').style.display = 'inline';
-        document.getElementById('resetButton').style.display = 'none';
-    }
-
-    function calculateScore() {
-        return Math.round(10 * (score / questions.length));
-    }
-
-    function saveScore(user, score) {
-        var scores = JSON.parse(localStorage.getItem('quizScores')) || {};
-        scores[user] = score;
-        localStorage.setItem('quizScores', JSON.stringify(scores));
-    }
-
-    function displayResults() {
-        var scores = JSON.parse(localStorage.getItem('quizScores')) || {};
-        var resultsHtml = "<ul>";
-        for (var user in scores) {
-            if (user !== "lider") {
-                resultsHtml += "<li>" + user + ": " + scores[user] + "</li>";
-            }
-        }
-        resultsHtml += "</ul>";
-        document.getElementById('results').innerHTML = resultsHtml;
-    }
-
-    function resetAllScores() {
-        localStorage.removeItem('quizScores');
-        displayResults();
-    }
-
-    function showLeaderScreen() {
-        document.getElementById('editContainer').style.display = 'none';
-        document.getElementById('leaderContainer').style.display = 'block';
-        displayResults();
-    }
-
-    function showEditScreen() {
-        document.getElementById('leaderContainer').style.display = 'none';
-        document.getElementById('editContainer').style.display = 'block';
-        displayEditQuestions();
-    }
-
-    function displayEditQuestions() {
-        var editQuestionsHtml = "";
-        for (var i = 0; i < questions.length; i++) {
-            var question = questions[i];
-            editQuestionsHtml += '<div id="questionContainer' + i + '"><input type="text" value="' + question.question + '" id="question' + i + '">';
-            editQuestionsHtml += '<button onclick="removeQuestion(' + i + ')">Remover Questão</button><br>';
-            for (var j = 0; j < question.options.length; j++) {
-                editQuestionsHtml += '<div id="optionContainer' + i + '_' + j + '">';
-                editQuestionsHtml += '<input type="text" value="' + question.options[j] + '" id="option' + i + '_' + j + '">';
-                editQuestionsHtml += '<input type="radio" name="answer' + i + '" ' + (question.answer === j ? 'checked' : '') + ' value="' + j + '">';
-                editQuestionsHtml += '<button onclick="removeOption(' + i + ',' + j + ')">Remover Opção</button><br>';
-                editQuestionsHtml += '</div>';
-            }
-            editQuestionsHtml += '<button onclick="addOption(' + i + ')">Adicionar Opção</button>';
-            editQuestionsHtml += '<button onclick="removeAllOptions(' + i + ')">Remover Todas as Opções</button></div><br>';
-        }
-        document.getElementById('editQuestions').innerHTML = editQuestionsHtml;
-    }
-
-    function addOption(questionIndex) {
-        var question = questions[questionIndex];
-        var newOptionId = "option" + questionIndex + "_" + question.options.length;
-        var container = document.createElement("div");
-        container.id = "optionContainer" + questionIndex + "_" + question.options.length;
-        container.innerHTML = '<input type="text" id="' + newOptionId + '">';
-        container.innerHTML += '<input type="radio" name="answer' + questionIndex + '" value="' + question.options.length + '">';
-        container.innerHTML += '<button onclick="removeOption(' + questionIndex + ',' + question.options.length + ')">Remover Opção</button><br>';
-        document.getElementById('questionContainer' + questionIndex).appendChild(container);
-        question.options.push("");
-    }
-
-    function removeOption(questionIndex, optionIndex) {
-        var question = questions[questionIndex];
-        question.options.splice(optionIndex, 1);
-        displayEditQuestions();
-    }
-
-    function removeAllOptions(questionIndex) {
-        questions[questionIndex].options = [];
-        displayEditQuestions();
-    }
-
-    function addQuestion() {
-        var newQuestion = {
-            question: "",
-            options: [""],
-            answer: 0
+        const firebaseConfig = {
+            apiKey: "AIzaSyCX8wBQ86GRksCLM-3jTUoxNicGxeU1k9U",
+            authDomain: "teste2-c9a3e.firebaseapp.com",
+            projectId: "teste2-c9a3e",
+            storageBucket: "teste2-c9a3e.appspot.com",
+            messagingSenderId: "821106776933",
+            appId: "1:821106776933:web:1b7451528f1807f94e1f8c"
         };
-        questions.push(newQuestion);
-        displayEditQuestions();
-    }
 
-    function removeQuestion(questionIndex) {
-        questions.splice(questionIndex, 1);
-        displayEditQuestions();
-    }
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-    function saveChanges() {
-        var newQuestions = [];
-        for (var i = 0; i < questions.length; i++) {
-            var questionText = document.getElementById('question' + i).value;
-            var options = [];
-            var answer = 0;
-            var radios = document.getElementsByName('answer' + i);
-            for (var j = 0; j < questions[i].options.length; j++) {
-                options.push(document.getElementById('option' + i + '_' + j).value);
-                if (radios[j].checked) {
-                    answer = j;
-                }
+        // Botão de Acesso do Professor
+        const professorAccessBtn = document.getElementById("professor-access-btn");
+        const professorPassword = document.getElementById("professor-password");
+        const professorArea = document.getElementById("professor-area");
+
+        // Verificação de senha e exibição de dados dos alunos
+        professorAccessBtn.addEventListener("click", async () => {
+            const password = professorPassword.value;
+            if (password === "135") {  // Verifica se a senha está correta
+                professorArea.classList.remove("hidden");  // Mostra a área de resultados
+                await fetchResults();  // Busca os resultados no Firestore
+            } else {
+                alert("Senha incorreta!");  // Alerta se a senha estiver errada
             }
-            newQuestions.push({
-                question: questionText,
-                options: options,
-                answer: answer
+        });
+
+        // Função para buscar e exibir os resultados dos alunos no Firestore
+        async function fetchResults() {
+            const querySnapshot = await getDocs(collection(db, "quizResponses"));
+            const resultsTable = document.getElementById("results-table").getElementsByTagName('tbody')[0];
+            resultsTable.innerHTML = "";  // Limpa a tabela antes de adicionar os resultados
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const row = resultsTable.insertRow();
+
+                row.insertCell(0).innerText = data.name;
+                row.insertCell(1).innerText = data.turma;
+                row.insertCell(2).innerText = data.q1 || "Sem resposta";
+                row.insertCell(3).innerText = data.q2 || "Sem resposta";
+                row.insertCell(4).innerText = data.q3 || "Sem resposta";
+                row.insertCell(5).innerText = data.q4 || "Sem resposta";
+                row.insertCell(6).innerText = data.q5 || "Sem resposta";
+                row.insertCell(7).innerText = data.q6 || "Sem resposta";
+                row.insertCell(8).innerText = data.q7 || "Sem resposta";
+                row.insertCell(9).innerText = data.q8 || "Sem resposta";
             });
         }
-        questions = newQuestions;
-        alert("Alterações salvas com sucesso!");
-        showLeaderScreen();
-    }
+    </script>
 
-    function saveTitle() {
-        var newTitle = document.getElementById('editTitle').value;
-        quizTitle = newTitle;
-        document.getElementById('quizTitle').innerText = quizTitle;
-        alert("Título do quiz salvo com sucesso!");
-    }
-
-    function logout() {
-        currentQuestion = 0;
-        score = 0;
-        currentUser = "";
-        document.getElementById('loginContainer').style.display = 'block';
-        document.getElementById('quizContainer').style.display = 'none';
-        document.getElementById('leaderContainer').style.display = 'none';
-        document.getElementById('editContainer').style.display = 'none';
-        document.getElementById('username').value = "";
-        document.getElementById('password').value = "";
-        document.getElementById('loginMessage').innerHTML = "";
-    }
-
-    // Inicia o quiz na primeira pergunta
-    resetQuiz();
-</script>
 </body>
 </html>
