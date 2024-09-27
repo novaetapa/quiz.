@@ -1,27 +1,107 @@
-<!DOCTYPE html>
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Quiz Bíblico interativo para testar seus conhecimentos sobre a Bíblia.">
-<title>Quiz Bíblico</title>
+<title>Quiz Elétrica</title>
 <style>
-    body { font-family: Arial, sans-serif; background-color: lightblue; }
-    .container { width: 600px; background-color: #dff0d8; margin: 20px auto; padding: 20px; border-radius: 8px; text-align: center; }
-    button { background-color: gray; color: white; border: none; padding: 10px 20px; margin: 10px; border-radius: 5px; cursor: pointer; }
-    #nextButton { background-color: blue; }
-    .correct { background-color: green; }
-    .incorrect { background-color: red; }
-    #leaderContainer, #editContainer { display: none; }
+    body {
+        font-family: Arial, sans-serif;
+        background-image: url(https://brggeradores.com.br/wp-content/uploads/2023/11/qual-a-funcao-de-um-gerador-eletrico-em-casa.png);:no-repeat
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        max-width: 600px;
+        background-color: #dff0d8;
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    button {
+        background-color: gray;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    #nextButton {
+        background-color: blue;
+    }
+    .correct {
+        background-color: green;
+    }
+    .incorrect {
+        background-color: red;
+    }
+    #quizContainer, #leaderContainer, #editContainer {
+        display: none;
+    }
+    /* Media Queries para Responsividade */
+    @media (max-width: 768px) {
+        .container {
+            width: 90%;
+            margin: 10px auto;
+        }
+    }
+    @media (max-width: 480px) {
+        .container {
+            width: 100%;
+            margin: 5px auto;
+            padding: 10px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+        }
+    }
 </style>
+<!-- Adicione o SDK do Firebase -->
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCX8wBQ86GRksCLM-3jTUoxNicGxeU1k9U",
+      authDomain: "teste2-c9a3e.firebaseapp.com",
+      projectId: "teste2-c9a3e",
+      storageBucket: "teste2-c9a3e.appspot.com",
+      messagingSenderId: "821106776933",
+      appId: "1:821106776933:web:1b7451528f1807f94e1f8c"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+</script>
 </head>
 <body>
+<div class="container" id="loginContainer">
+    <h1>Login</h1>
+    <div>
+        <label for="username">Usuário:</label>
+        <input type="text" id="username">
+    </div>
+    <div>
+        <label for="password">Senha:</label>
+        <input type="password" id="password">
+    </div>
+    <button onclick="validateLogin()">Entrar</button>
+    <div id="loginMessage"></div>
+</div>
 <div class="container" id="quizContainer">
-    <h1 id="quizTitle">Quiz Bíblico</h1>
+    <h1 id="quizTitle">Quiz Elétrica</h1>
     <div id="question"></div>
     <div id="options"></div>
     <button id="nextButton" onclick="nextQuestion()">Prosseguir</button>
     <button id="resetButton" onclick="resetQuiz()" style="display:none;">Voltar ao Início</button>
+    <button onclick="logout()">Logout</button>
     <div id="score"></div>
 </div>
 <div class="container" id="leaderContainer">
@@ -29,11 +109,12 @@
     <div id="results"></div>
     <button onclick="resetAllScores()">Resetar Resultados</button>
     <button onclick="showEditScreen()">Editar Questões</button>
+    <button onclick="logout()">Logout</button>
 </div>
 <div class="container" id="editContainer">
     <h1>Editar Título do Quiz</h1>
     <div>
-        <input type="text" id="editTitle" value="Quiz Bíblico">
+        <input type="text" id="editTitle" value="Quiz Elétrica">
         <button onclick="saveTitle()">Salvar Título</button>
     </div>
     <h1>Editar Questões</h1>
@@ -43,19 +124,71 @@
     <button onclick="showLeaderScreen()">Voltar</button>
 </div>
 <script>
-    var currentQuestion = 0, score = 0, quizTitle = "Quiz Bíblico";
+    var currentQuestion = 0;
+    var score = 0;
+    var currentUser = "";
+    var quizTitle = "Quiz Elétrica";
     var questions = [
-        {question: "Quem foi o primeiro homem?", options: ["Abel", "Caim", "Noé", "Adão", "Enoque"], answer: 3},
-        {question: "Quem foi lançado na cova dos leões?", options: ["Davi", "Elias", "Moisés", "Daniel", "José"], answer: 3},
-        {question: "Qual o primeiro livro do Novo Testamento?", options: ["Lucas", "Mateus", "Marcos", "João", "Atos"], answer: 1},
-        {question: "Quem foi o traidor de Jesus?", options: ["Pedro", "Judas Iscariotes", "João", "André", "Tomé"], answer: 1},
-        {question: "Qual o último livro da Bíblia?", options: ["Apocalipse", "Judas", "3 João", "Hebreus", "Tiago"], answer: 0},
-        {question: "Quantos dias e noites choveu durante o dilúvio de Noé?", options: ["30", "60", "40", "70", "50"], answer: 2},
-        {question: "Qual era a profissão de Mateus antes de seguir Jesus?", options: ["Pastor", "Pescador", "Médico", "Cobrador de impostos", "Carpinteiro"], answer: 3},
-        {question: "Quem conduziu os israelitas na travessia do Mar Vermelho?", options: ["Josué", "Arão", "Moisés", "Calebe", "Abraão"], answer: 2},
-        {question: "Onde Jesus nasceu?", options: ["Jerusalém", "Nazaré", "Belém", "Galileia", "Egito"], answer: 2},
-        {question: "Quem foi o homem mais forte da Bíblia?", options: ["Golias", "Sansão", "Salomão", "Davi", "Absalão"], answer: 1}
+        { question: "O que é uma corrente elétrica?", options: ["Movimento de elétrons", "Movimento de prótons", "Movimento de nêutrons", "Movimento de átomos"], answer: 0 },
+        { question: "O que é uma resistência elétrica?", options: ["Oposição ao fluxo de corrente", "Facilitação ao fluxo de corrente", "Geração de corrente", "Consumo de corrente"], answer: 0 },
+        { question: "O que é a voltagem?", options: ["Potencial elétrico", "Corrente elétrica", "Resistência elétrica", "Energia elétrica"], answer: 0 },
+        { question: "Qual a unidade de medida da corrente elétrica?", options: ["Volt", "Ohm", "Ampere", "Watt"], answer: 2 },
+        { question: "Qual a unidade de medida da resistência elétrica?", options: ["Volt", "Ohm", "Ampere", "Watt"], answer: 1 },
+        { question: "Qual a unidade de medida da voltagem?", options: ["Volt", "Ohm", "Ampere", "Watt"], answer: 0 },
+        { question: "O que é um curto-circuito?", options: ["Conexão de baixa resistência", "Conexão de alta resistência", "Interrupção de circuito", "Aumento de resistência"], answer: 0 },
+        { question: "O que é um circuito em série?", options: ["Componentes conectados em uma única trajetória", "Componentes conectados em múltiplas trajetórias", "Componentes conectados em paralelo", "Componentes conectados em estrela"], answer: 0 },
+        { question: "O que é um circuito em paralelo?", options: ["Componentes conectados em múltiplas trajetórias", "Componentes conectados em uma única trajetória", "Componentes conectados em série", "Componentes conectados em estrela"], answer: 0 },
+        { question: "Qual é a lei de Ohm?", options: ["V = IR", "P = VI", "I = V/R", "R = V/I"], answer: 0 },
+        { question: "O que é um capacitor?", options: ["Armazena carga elétrica", "Armazena corrente elétrica", "Armazena resistência elétrica", "Armazena potência elétrica"], answer: 0 },
+        { question: "O que é um indutor?", options: ["Armazena energia em um campo magnético", "Armazena energia em um campo elétrico", "Armazena energia em um campo gravitacional", "Armazena energia em um campo nuclear"], answer: 0 },
+        { question: "Qual é a função de um diodo?", options: ["Permitir o fluxo de corrente em uma direção", "Impedir o fluxo de corrente em ambas as direções", "Permitir o fluxo de corrente em ambas as direções", "Impedir o fluxo de corrente em uma direção"], answer: 0 },
+        { question: "O que é um transformador?", options: ["Dispositivo que altera a voltagem", "Dispositivo que altera a corrente", "Dispositivo que altera a resistência", "Dispositivo que altera a potência"], answer: 0 },
+        { question: "Qual a função de um resistor?", options: ["Limitar a corrente elétrica", "Aumentar a corrente elétrica", "Gerar corrente elétrica", "Armazenar corrente elétrica"], answer: 0 },
+        { question: "O que é um circuito aberto?", options: ["Circuito com interrupção", "Circuito com baixa resistência", "Circuito com alta resistência", "Circuito em curto"], answer: 0 },
+        { question: "O que é um circuito fechado?", options: ["Circuito sem interrupção", "Circuito com interrupção", "Circuito em curto", "Circuito com alta resistência"], answer: 0 },
+        { question: "Qual a função de um fusível?", options: ["Proteger o circuito contra sobrecarga", "Gerar corrente elétrica", "Aumentar a voltagem", "Armazenar energia elétrica"], answer: 0 },
+        { question: "O que é um gerador?", options: ["Dispositivo que converte energia mecânica em elétrica", "Dispositivo que converte energia elétrica em mecânica", "Dispositivo que armazena energia elétrica", "Dispositivo que armazena energia mecânica"], answer: 0 },
+        { question: "O que é um motor elétrico?", options: ["Dispositivo que converte energia elétrica em mecânica", "Dispositivo que converte energia mecânica em elétrica", "Dispositivo que armazena energia elétrica", "Dispositivo que armazena energia mecânica"], answer: 0 },
+        { question: "Qual a unidade de medida da potência elétrica?", options: ["Volt", "Ohm", "Ampere", "Watt"], answer: 3 },
+        { question: "O que é um circuito integrado?", options: ["Conjunto de componentes eletrônicos miniaturizados", "Conjunto de resistores", "Conjunto de capacitores", "Conjunto de indutores"], answer: 0 },
+        { question: "Qual a unidade de medida da frequência?", options: ["Hertz", "Watt", "Volt", "Ohm"], answer: 0 },
+        { question: "O que é uma fonte de alimentação?", options: ["Dispositivo que fornece energia elétrica", "Dispositivo que armazena energia elétrica", "Dispositivo que consome energia elétrica", "Dispositivo que regula energia elétrica"], answer: 0 },
+        { question: "Qual o símbolo de um resistor?", options: ["R", "C", "L", "D"], answer: 0 },
+        { question: "O que é um wattímetro?", options: ["Instrumento que mede a potência elétrica", "Instrumento que mede a corrente elétrica", "Instrumento que mede a resistência elétrica", "Instrumento que mede a tensão elétrica"], answer: 0 }
     ];
+
+    var validLogins = {
+        "usuario1": "senha1",
+        "usuario2": "senha2",
+        "usuario3": "senha3",
+        "usuario4": "senha4",
+        "usuario5": "senha5",
+        "usuario6": "senha6",
+        "usuario7": "senha7",
+        "usuario8": "senha8",
+        "usuario9": "senha9",
+        "daniel": "daniel",
+        "lider": "lider123"
+    };
+
+    function validateLogin() {
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+        if (validLogins.hasOwnProperty(username) && validLogins[username] === password) {
+            currentUser = username;
+            if (username === "lider") {
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('leaderContainer').style.display = 'block';
+                displayResults();
+            } else {
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('quizContainer').style.display = 'block';
+                displayQuestion();
+            }
+        } else {
+            document.getElementById('loginMessage').innerHTML = 'Login ou senha incorretos.';
+        }
+    }
 
     function displayQuestion() {
         document.getElementById('score').innerHTML = "";
@@ -95,6 +228,7 @@
             document.getElementById('score').innerHTML = score === questions.length ? "Parabéns, você acertou tudo!" : "Pontuação final: " + finalScore;
             document.getElementById('nextButton').style.display = 'none';
             document.getElementById('resetButton').style.display = 'inline';
+            saveScore(currentUser, finalScore);
         }
     }
 
@@ -109,6 +243,145 @@
     function calculateScore() {
         return Math.round(10 * (score / questions.length));
     }
+
+    function saveScore(user, score) {
+        var scores = JSON.parse(localStorage.getItem('quizScores')) || {};
+        scores[user] = score;
+        localStorage.setItem('quizScores', JSON.stringify(scores));
+    }
+
+    function displayResults() {
+        var scores = JSON.parse(localStorage.getItem('quizScores')) || {};
+        var resultsHtml = "<ul>";
+        for (var user in scores) {
+            if (user !== "lider") {
+                resultsHtml += "<li>" + user + ": " + scores[user] + "</li>";
+            }
+        }
+        resultsHtml += "</ul>";
+        document.getElementById('results').innerHTML = resultsHtml;
+    }
+
+    function resetAllScores() {
+        localStorage.removeItem('quizScores');
+        displayResults();
+    }
+
+    function showLeaderScreen() {
+        document.getElementById('editContainer').style.display = 'none';
+        document.getElementById('leaderContainer').style.display = 'block';
+        displayResults();
+    }
+
+    function showEditScreen() {
+        document.getElementById('leaderContainer').style.display = 'none';
+        document.getElementById('editContainer').style.display = 'block';
+        displayEditQuestions();
+    }
+
+    function displayEditQuestions() {
+        var editQuestionsHtml = "";
+        for (var i = 0; i < questions.length; i++) {
+            var question = questions[i];
+            editQuestionsHtml += '<div id="questionContainer' + i + '"><input type="text" value="' + question.question + '" id="question' + i + '">';
+            editQuestionsHtml += '<button onclick="removeQuestion(' + i + ')">Remover Questão</button><br>';
+            for (var j = 0; j < question.options.length; j++) {
+                editQuestionsHtml += '<div id="optionContainer' + i + '_' + j + '">';
+                editQuestionsHtml += '<input type="text" value="' + question.options[j] + '" id="option' + i + '_' + j + '">';
+                editQuestionsHtml += '<input type="radio" name="answer' + i + '" ' + (question.answer === j ? 'checked' : '') + ' value="' + j + '">';
+                editQuestionsHtml += '<button onclick="removeOption(' + i + ',' + j + ')">Remover Opção</button><br>';
+                editQuestionsHtml += '</div>';
+            }
+            editQuestionsHtml += '<button onclick="addOption(' + i + ')">Adicionar Opção</button>';
+            editQuestionsHtml += '<button onclick="removeAllOptions(' + i + ')">Remover Todas as Opções</button></div><br>';
+        }
+        document.getElementById('editQuestions').innerHTML = editQuestionsHtml;
+    }
+
+    function addOption(questionIndex) {
+        var question = questions[questionIndex];
+        var newOptionId = "option" + questionIndex + "_" + question.options.length;
+        var container = document.createElement("div");
+        container.id = "optionContainer" + questionIndex + "_" + question.options.length;
+        container.innerHTML = '<input type="text" id="' + newOptionId + '">';
+        container.innerHTML += '<input type="radio" name="answer' + questionIndex + '" value="' + question.options.length + '">';
+        container.innerHTML += '<button onclick="removeOption(' + questionIndex + ',' + question.options.length + ')">Remover Opção</button><br>';
+        document.getElementById('questionContainer' + questionIndex).appendChild(container);
+        question.options.push("");
+    }
+
+    function removeOption(questionIndex, optionIndex) {
+        var question = questions[questionIndex];
+        question.options.splice(optionIndex, 1);
+        displayEditQuestions();
+    }
+
+    function removeAllOptions(questionIndex) {
+        questions[questionIndex].options = [];
+        displayEditQuestions();
+    }
+
+    function addQuestion() {
+        var newQuestion = {
+            question: "",
+            options: [""],
+            answer: 0
+        };
+        questions.push(newQuestion);
+        displayEditQuestions();
+    }
+
+    function removeQuestion(questionIndex) {
+        questions.splice(questionIndex, 1);
+        displayEditQuestions();
+    }
+
+    function saveChanges() {
+        var newQuestions = [];
+        for (var i = 0; i < questions.length; i++) {
+            var questionText = document.getElementById('question' + i).value;
+            var options = [];
+            var answer = 0;
+            var radios = document.getElementsByName('answer' + i);
+            for (var j = 0; j < questions[i].options.length; j++) {
+                options.push(document.getElementById('option' + i + '_' + j).value);
+                if (radios[j].checked) {
+                    answer = j;
+                }
+            }
+            newQuestions.push({
+                question: questionText,
+                options: options,
+                answer: answer
+            });
+        }
+        questions = newQuestions;
+        alert("Alterações salvas com sucesso!");
+        showLeaderScreen();
+    }
+
+    function saveTitle() {
+        var newTitle = document.getElementById('editTitle').value;
+        quizTitle = newTitle;
+        document.getElementById('quizTitle').innerText = quizTitle;
+        alert("Título do quiz salvo com sucesso!");
+    }
+
+    function logout() {
+        currentQuestion = 0;
+        score = 0;
+        currentUser = "";
+        document.getElementById('loginContainer').style.display = 'block';
+        document.getElementById('quizContainer').style.display = 'none';
+        document.getElementById('leaderContainer').style.display = 'none';
+        document.getElementById('editContainer').style.display = 'none';
+        document.getElementById('username').value = "";
+        document.getElementById('password').value = "";
+        document.getElementById('loginMessage').innerHTML = "";
+    }
+
+    // Inicia o quiz na primeira pergunta
+    resetQuiz();
 </script>
 </body>
 </html>
